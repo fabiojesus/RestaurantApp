@@ -7,7 +7,7 @@ using WebApplication.Models.HtmlComponents;
 
 namespace WebApplication.Support
 {
-    public static class AlertMessageFactory
+    public static class AlertFactory
     {
         public static string GenerateAlert(NotificationType type, string notification, string message)
         {
@@ -22,7 +22,7 @@ namespace WebApplication.Support
 
         public static string GenerateAlert(NotificationType type, Exception exception)
         {
-            return JsonConvert.SerializeObject(new AlertNotification() { Notification = type.ToString() + "!", Type = type, Message = exception.InnerException.Message });
+            return JsonConvert.SerializeObject(new AlertNotification() { Notification = type.ToString() + "!", Type = type, Message = exception.Message });
         }
     }
 }

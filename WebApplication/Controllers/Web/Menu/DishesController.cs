@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PresentationLayer.Models;
 using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusinessObjects;
 using Recodme.Academy.RestaurantApp.DataLayer.MenuRecords;
@@ -7,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication.Models.HtmlComponents;
+using WebApplication.Support;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantControllers.Web.MenuControllers
 {
@@ -17,6 +20,39 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
     {
         private readonly DishBusinessObject _bo = new DishBusinessObject();
         private readonly DietaryRestrictionBusinessObject _dro = new DietaryRestrictionBusinessObject();
+
+
+        private string GetDeleteRef()
+        {
+            return this.ControllerContext.RouteData.Values["controller"] + "/" + nameof(Delete);
+        }
+
+        private List<BreadCrumb> GetCrumbs()
+        {
+            return new List<BreadCrumb>()
+                { new BreadCrumb(){Icon ="fa-home", Action="Index", Controller="Home", Text="Home"},
+                  new BreadCrumb(){Icon = "fa-user-cog", Action="Administration", Controller="Home", Text = "Administration"},
+                  new BreadCrumb(){Icon = "fa-shish-kebab", Action="Index", Controller="Dishes", Text = "Dishes"}
+                };
+        }
+
+        private IActionResult RecordNotFound()
+        {
+            TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Information, "The record was not found");
+            return RedirectToAction(nameof(Index));
+        }
+
+        private IActionResult OperationErrorBackToIndex(Exception exception)
+        {
+            TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Danger, exception);
+            return RedirectToAction(nameof(Index));
+        }
+
+        private IActionResult OperationSuccess(string message)
+        {
+            TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Success, message);
+            return RedirectToAction(nameof(Index));
+        }
 
 
         private async Task<List<DietaryRestrictionViewModel>> GetDietaryRestrictionViewModels(List<Guid> ids)
@@ -41,78 +77,129 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         public async Task<IActionResult> Index()
         {
             var listOperation = await _bo.ListNonDeletedAsync();
-            if (!listOperation.Success) return View("Error", new ErrorViewModel() { RequestId = listOperation.Exception.Message });
+            if (!listOperation.Success) return OperationErrorBackToIndex(listOperation.Exception);
+
             var lst = new List<DishViewModel>();
             foreach (var item in listOperation.Result)
             {
                 lst.Add(DishViewModel.Parse(item));
             }
+
             var drList = await GetDietaryRestrictionViewModels(listOperation.Result.Select(x => x.DietaryRestrictionId).Distinct().ToList());
-             ViewData["Title"] = "Dishes";
-            ViewData["BreadCrumbs"] = new List<string>() { "Home", "Dishes" };
             ViewData["DietaryRestrictions"] = drList;
+            ViewData["Title"] = "Dishes";
+            ViewData["BreadCrumbs"] = GetCrumbs();
+            ViewData["DeleteHref"] = GetDeleteRef();
+
             return View(lst);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return RecordNotFound();
             var getOperation = await _bo.ReadAsync((Guid)id);
-            if (!getOperation.Success) return View("Error", getOperation.Exception.Message);
-            if (getOperation.Result == null) return NotFound();
+
+            if (!getOperation.Success) return OperationErrorBackToIndex(getOperation.Exception);
+            if (getOperation.Result == null) return RecordNotFound();
+
+            var getDrOperation = await _dro.ReadAsync(getOperation.Result.DietaryRestrictionId);
+            if (!getDrOperation.Success) return OperationErrorBackToIndex(getDrOperation.Exception);
+            if (getDrOperation.Result == null) return RecordNotFound();
+
             var vm = DishViewModel.Parse(getOperation.Result);
-            ViewData["Header"] = "Dish";
+            ViewData["Title"] = "Dish";
+            var crumbs = GetCrumbs();
+            crumbs.Add(new BreadCrumb() { Action = "Details", Controller = "Dishes", Icon = "fa-search", Text = "Detail" });
+            ViewData["DietaryRestriction"] = DietaryRestrictionViewModel.Parse(getDrOperation.Result);
+            ViewData["BreadCrumbs"] = crumbs;
             return View(vm);
         }
 
-        [HttpGet("/new")]
-        public IActionResult New()
+        [HttpGet("new")]
+        public async Task<IActionResult> New()
         {
+            var listDrOperation = await _dro.ListNonDeletedAsync();
+            if (!listDrOperation.Success) return OperationErrorBackToIndex(listDrOperation.Exception);
+
+            var drList = new List<SelectListItem>();
+            foreach (var item in listDrOperation.Result)
+            {
+                drList.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name });
+            }
+            ViewBag.DietaryRestrictions = drList;
+            ViewData["Title"] = "New Dish";
+            var crumbs = GetCrumbs();
+            crumbs.Add(new BreadCrumb() { Action = "New", Controller = "Dishes", Icon = "fa-plus", Text = "New" });
+            ViewData["BreadCrumbs"] = crumbs;
             return View();
         }
 
-        [HttpPost]
+
+        [HttpPost("new")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DishViewModel vm)
+        public async Task<IActionResult> New(DishViewModel vm)
         {
             if (ModelState.IsValid)
             {
                 var model = vm.ToModel();
                 var createOperation = await _bo.CreateAsync(model);
-                if (!createOperation.Success) return View("Error", new ErrorViewModel() { RequestId = createOperation.Exception.Message });
-                return RedirectToAction(nameof(Index));
+                if (!createOperation.Success) return OperationErrorBackToIndex(createOperation.Exception);
+                else return OperationSuccess("The record was successfuly created");
             }
             return View(vm);
         }
 
-        [HttpGet("/edit/{id}")]
+        [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return RecordNotFound();
 
             var getOperation = await _bo.ReadAsync((Guid)id);
-            if (!getOperation.Success) return View("Error", new ErrorViewModel() { RequestId = getOperation.Exception.Message });
-            if (getOperation.Result == null) return NotFound();
+            if (!getOperation.Success) return OperationErrorBackToIndex(getOperation.Exception);
+            if (getOperation.Result == null) return RecordNotFound();
+
             var vm = DishViewModel.Parse(getOperation.Result);
+            var listDrOperation = await _dro.ListNonDeletedAsync();
+            if (!listDrOperation.Success) return OperationErrorBackToIndex(listDrOperation.Exception);
+
+            var drList = new List<SelectListItem>();
+            foreach (var item in listDrOperation.Result)
+            {
+                var listItem = new SelectListItem() { Value = item.Id.ToString(), Text = item.Name };
+                if (item.Id == vm.DietaryRestrictionId) listItem.Selected = true;
+                drList.Add(listItem);
+            }
+            ViewBag.DietaryRestrictions = drList;
+            ViewData["Title"] = "Edit Course";
+            var crumbs = GetCrumbs();
+            crumbs.Add(new BreadCrumb() { Action = "Edit", Controller = "Dishes", Icon = "fa-edit", Text = "Edit" });
+            ViewData["BreadCrumbs"] = crumbs;
             return View(vm);
         }
 
-        [HttpPost]
+
+        [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, DishViewModel vm)
         {
             if (ModelState.IsValid)
             {
                 var getOperation = await _bo.ReadAsync(id);
-                if (!getOperation.Success) return View("Error", new ErrorViewModel() { RequestId = getOperation.Exception.Message });
-                if (getOperation.Result == null) return NotFound();
+                if (!getOperation.Success) return OperationErrorBackToIndex(getOperation.Exception);
+                if (getOperation.Result == null) return RecordNotFound();
                 var result = getOperation.Result;
                 if (!vm.CompareToModel(result))
                 {
                     result = vm.ToModel(result);
                     var updateOperation = await _bo.UpdateAsync(result);
-                    if (!updateOperation.Success) return View("Error", new ErrorViewModel() { RequestId = updateOperation.Exception.Message });
+                    if (!updateOperation.Success)
+                    {
+                        TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Danger, updateOperation.Exception);
+                        return View(vm);
+                    }
+                    else return OperationSuccess("The record was successfuly updated");
                 }
             }
             return RedirectToAction(nameof(Index));
@@ -121,10 +208,10 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return RecordNotFound();
             var deleteOperation = await _bo.DeleteAsync((Guid)id);
-            if (!deleteOperation.Success) return View("Error", new ErrorViewModel() { RequestId = deleteOperation.Exception.Message });
-            return RedirectToAction(nameof(Index));
+            if(!deleteOperation.Success) return OperationErrorBackToIndex(deleteOperation.Exception);
+            else return OperationSuccess("The record was successfuly deleted");
         }
     }
 }

@@ -1,0 +1,33 @@
+﻿@using Recodme.Academy.RestaurantApp.WebApplication.Models.MenuViewModels;
+@model DishViewModel
+
+<div class="card">
+    <div class="card-header bg-greenish-green">
+        <h2 class="float-left">
+            @ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="ml-5 mr-5">
+            <dl class="row">
+                <dt class="col-3">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-9">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-3">
+                    @Html.DisplayNameFor(model => model.DietaryRestrictionId)
+                </dt>
+                <dd class="col-9">
+                    @{ 
+                        var dr = ViewData["DietaryRestriction"] as DietaryRestrictionViewModel;
+                    }
+                    <a asp-controller="DietaryRestrictions" asp-action="Details" asp-route-id="@dr.Id">@dr.Name</a>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>

@@ -27,7 +27,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
             return new List<BreadCrumb>()
                 { new BreadCrumb(){Icon ="fa-home", Action="Index", Controller="Home", Text="Home"},
                   new BreadCrumb(){Icon = "fa-user-cog", Action="Administration", Controller="Home", Text = "Administration"},
-                  new BreadCrumb(){Icon = "fa-hat-chef", Action="Index", Controller="DietaryRestrictions", Text = "DietaryRestrictions"}
+                  new BreadCrumb(){Icon = "fa-seedling", Action="Index", Controller="DietaryRestrictions", Text = "DietaryRestrictions"}
                 };
         }
 
