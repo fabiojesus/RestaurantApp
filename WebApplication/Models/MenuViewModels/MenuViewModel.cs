@@ -19,6 +19,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Models.MenuViewModels
         {
             return new MenuViewModel()
             {
+                Id = vm.Id,
                 Date = vm.Date,
                 RestaurantId = vm.RestaurantId,
                 MealId = vm.MealId

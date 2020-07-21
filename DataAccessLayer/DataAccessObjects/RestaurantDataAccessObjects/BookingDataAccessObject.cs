@@ -8,68 +8,68 @@ using System.Threading.Tasks;
 
 namespace Recodme.Academy.RestaurantApp.DataAccessLayer.DataAccessObjects.RestaurantDataAcccessObjects
 {
-    public class RestaurantDataAccessObject
+    public class BookingDataAccessObject
     {
-        public List<Restaurant> List()
+        public List<Booking> List()
         {
         
             using var ctx = new RestaurantContext();
-            return ctx.Restaurants.ToList();
+            return ctx.Bookings.ToList();
         }
 
-        public async Task<List<Restaurant>> ListAsync()
+        public async Task<List<Booking>> ListAsync()
         {
             using var ctx = new RestaurantContext();
-            return await ctx.Restaurants.ToListAsync();
+            return await ctx.Bookings.ToListAsync();
         }
 
-        public void Create(Restaurant booking)
+        public void Create(Booking booking)
         {
             using var ctx = new RestaurantContext();
-            ctx.Restaurants.Add(booking);
+            ctx.Bookings.Add(booking);
             ctx.SaveChanges();
         }
 
-        public async Task CreateAsync(Restaurant booking)
+        public async Task CreateAsync(Booking booking)
         {
             using var ctx = new RestaurantContext();
-            await ctx.Restaurants.AddAsync(booking);
+            await ctx.Bookings.AddAsync(booking);
             await ctx.SaveChangesAsync();
         }
 
-        public Restaurant Read(Guid id)
+        public Booking Read(Guid id)
         {
             using var ctx = new RestaurantContext();
-            return ctx.Restaurants.FirstOrDefault(x => x.Id == id);
+            return ctx.Bookings.FirstOrDefault(x => x.Id == id);
         }
 
-        public async Task<Restaurant> ReadAsync(Guid id)
+        public async Task<Booking> ReadAsync(Guid id)
         {
             using var ctx = new RestaurantContext();
-            return await ctx.Restaurants.FirstOrDefaultAsync(x => x.Id == id);
+            return await ctx.Bookings.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public void Update(Restaurant booking)
+        public void Update(Booking booking)
         {
             using var ctx = new RestaurantContext();
             ctx.Entry(booking).State = EntityState.Modified;
             ctx.SaveChanges();
         }
 
-        public async Task UpdateAsync(Restaurant booking)
+        public async Task UpdateAsync(Booking booking)
         {
             using var ctx = new RestaurantContext();
             ctx.Entry(booking).State = EntityState.Modified;
             await ctx.SaveChangesAsync();
         }
 
-        public void Delete(Restaurant booking)
+        public void Delete(Booking booking)
         {
             booking.IsDeleted = true;
             Update(booking);
         }
 
-        public async Task DeleteAsync(Restaurant booking)
+        public async Task DeleteAsync(Booking booking)
         {
             booking.IsDeleted = true;
             await UpdateAsync(booking);

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Recodme.Academy.RestaurantApp.BusinessLayer.OperationResults
 {
@@ -8,6 +6,7 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.OperationResults
     {
         public bool Success { get; set; }
         public Exception Exception { get; set; }
+        public string Message { get; set; }
     }
 
     public class OperationResult<T> : OperationResult

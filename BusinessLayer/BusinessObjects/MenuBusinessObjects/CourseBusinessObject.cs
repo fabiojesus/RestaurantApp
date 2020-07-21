@@ -132,13 +132,13 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
 
         #region Create
 
-        public virtual OperationResult Create(Course clientRecord)
+        public virtual OperationResult Create(Course course)
         {
             try
             {
 
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                _dao.Create(clientRecord);
+                _dao.Create(course);
                 transactionScope.Complete();
                 return new OperationResult<List<Course>> { Success = true };
             }
@@ -148,13 +148,13 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
             }
         }
 
-        public async virtual Task<OperationResult> CreateAsync(Course clientRecord)
+        public async virtual Task<OperationResult> CreateAsync(Course course)
         {
             try
             {
 
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                await _dao.CreateAsync(clientRecord);
+                await _dao.CreateAsync(course);
                 transactionScope.Complete();
                 return new OperationResult<List<Course>> { Success = true };
             }
@@ -200,12 +200,12 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
         #endregion
 
         #region Update
-        public virtual OperationResult Update(Course clientRecord)
+        public virtual OperationResult Update(Course course)
         {
             try
             {
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                _dao.Update(clientRecord);
+                _dao.Update(course);
                 transactionScope.Complete();
                 return new OperationResult<List<Course>> { Success = true };
             }
@@ -215,12 +215,12 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
             }
         }
 
-        public async virtual Task<OperationResult> UpdateAsync(Course clientRecord)
+        public async virtual Task<OperationResult> UpdateAsync(Course course)
         {
             try
             {
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                await _dao.UpdateAsync(clientRecord);
+                await _dao.UpdateAsync(course);
                 transactionScope.Complete();
                 return new OperationResult<List<Course>> { Success = true };
             }
@@ -232,13 +232,13 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
         #endregion
 
         #region Delete
-        public virtual OperationResult Delete(Course clientRecord)
+        public virtual OperationResult Delete(Course course)
         {
             try
             {
 
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                _dao.Update(clientRecord);
+                _dao.Update(course);
                 transactionScope.Complete();
                 return new OperationResult { Success = true };
             }
@@ -248,12 +248,12 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
             }
         }
 
-        public async virtual Task<OperationResult> DeleteAsync(Course clientRecord)
+        public async virtual Task<OperationResult> DeleteAsync(Course course)
         {
             try
             {
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                await _dao.DeleteAsync(clientRecord);
+                await _dao.DeleteAsync(course);
                 transactionScope.Complete();
                 return new OperationResult { Success = true };
             }

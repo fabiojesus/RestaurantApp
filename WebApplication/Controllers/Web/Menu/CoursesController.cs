@@ -34,19 +34,19 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
 
         private IActionResult RecordNotFound()
         {
-            TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Information, "The record was not found");
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Information, "The record was not found");
             return RedirectToAction(nameof(Index));
         }
 
         private IActionResult OperationErrorBackToIndex(Exception exception)
         {
-            TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Danger, exception);
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, exception);
             return RedirectToAction(nameof(Index));
         }
 
         private IActionResult OperationSuccess(string message)
         {
-            TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Success, message);
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Success, message);
             return RedirectToAction(nameof(Index));
         }
 
@@ -145,7 +145,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
                     var updateOperation = await _bo.UpdateAsync(result);
                     if (!updateOperation.Success)
                     {
-                        TempData["Alert"] = AlertMessageFactory.GenerateAlert(NotificationType.Danger, updateOperation.Exception);
+                        TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, updateOperation.Exception);
                         return View(vm);
                     }
                     else return OperationSuccess("The record was successfuly updated");

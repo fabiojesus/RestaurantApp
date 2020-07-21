@@ -132,13 +132,13 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
 
         #region Create
 
-        public virtual OperationResult Create(DietaryRestriction clientRecord)
+        public virtual OperationResult Create(DietaryRestriction dietaryRestriction)
         {
             try
             {
 
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                _dao.Create(clientRecord);
+                _dao.Create(dietaryRestriction);
                 transactionScope.Complete();
                 return new OperationResult<List<DietaryRestriction>> { Success = true };
             }
@@ -148,13 +148,13 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
             }
         }
 
-        public async virtual Task<OperationResult> CreateAsync(DietaryRestriction clientRecord)
+        public async virtual Task<OperationResult> CreateAsync(DietaryRestriction dietaryRestriction)
         {
             try
             {
 
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                await _dao.CreateAsync(clientRecord);
+                await _dao.CreateAsync(dietaryRestriction);
                 transactionScope.Complete();
                 return new OperationResult<List<DietaryRestriction>> { Success = true };
             }
@@ -200,12 +200,12 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
         #endregion
 
         #region Update
-        public virtual OperationResult Update(DietaryRestriction clientRecord)
+        public virtual OperationResult Update(DietaryRestriction dietaryRestriction)
         {
             try
             {
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                _dao.Update(clientRecord);
+                _dao.Update(dietaryRestriction);
                 transactionScope.Complete();
                 return new OperationResult<List<DietaryRestriction>> { Success = true };
             }
@@ -215,12 +215,12 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
             }
         }
 
-        public async virtual Task<OperationResult> UpdateAsync(DietaryRestriction clientRecord)
+        public async virtual Task<OperationResult> UpdateAsync(DietaryRestriction dietaryRestriction)
         {
             try
             {
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                await _dao.UpdateAsync(clientRecord);
+                await _dao.UpdateAsync(dietaryRestriction);
                 transactionScope.Complete();
                 return new OperationResult<List<DietaryRestriction>> { Success = true };
             }
@@ -232,13 +232,13 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
         #endregion
 
         #region Delete
-        public virtual OperationResult Delete(DietaryRestriction clientRecord)
+        public virtual OperationResult Delete(DietaryRestriction dietaryRestriction)
         {
             try
             {
 
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                _dao.Update(clientRecord);
+                _dao.Update(dietaryRestriction);
                 transactionScope.Complete();
                 return new OperationResult { Success = true };
             }
@@ -248,12 +248,12 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusine
             }
         }
 
-        public async virtual Task<OperationResult> DeleteAsync(DietaryRestriction clientRecord)
+        public async virtual Task<OperationResult> DeleteAsync(DietaryRestriction dietaryRestriction)
         {
             try
             {
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-                await _dao.DeleteAsync(clientRecord);
+                await _dao.DeleteAsync(dietaryRestriction);
                 transactionScope.Complete();
                 return new OperationResult { Success = true };
             }

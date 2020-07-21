@@ -1,0 +1,45 @@
+﻿@using Recodme.Academy.RestaurantApp.WebApplication.Models.MenuViewModels;
+@using Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewModels;
+@model MenuViewModel
+
+<div class="card">
+    <div class="card-header bg-greenish-green">
+        <h2 class="float-left">
+            @ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="ml-5 mr-5">
+            <dl class="row">
+                <dt class="col-3">
+                    @Html.DisplayNameFor(model => model.Date)
+                </dt>
+                <dd class="col-9">
+                    @Html.DisplayFor(model => model.Date)
+                </dd>
+            </dl>
+            @{
+                var rest = ViewData["Restaurant"] as RestaurantViewModel;
+                var meal = ViewData["Meal"] as MealViewModel;
+            }
+            <dl class="row">
+                <dt class="col-3">
+                    @Html.DisplayNameFor(model => model.RestaurantId)
+                </dt>
+                <dd class="col-9">
+
+                    <a asp-controller="DietaryRestrictions" asp-action="Details" asp-route-id="@rest.Id">@rest.Name</a>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-3">
+                    @Html.DisplayNameFor(model => model.MealId)
+                </dt>
+                <dd class="col-9">
+
+                    <a asp-controller="DietaryRestrictions" asp-action="Details" asp-route-id="@meal.Id">@meal.Name</a>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
