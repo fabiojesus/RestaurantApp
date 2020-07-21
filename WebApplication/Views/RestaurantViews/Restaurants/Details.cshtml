@@ -1,0 +1,54 @@
+﻿@using Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewModels;
+@model RestaurantViewModel
+
+<div class="card">
+    <div class="card-header bg-greenish-green">
+        <h2 class="float-left">
+            @ViewData["Title"]
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="ml-5 mr-5">
+            <dl class="row">
+                <dt class="col-2">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-10">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-2">
+                    @Html.DisplayNameFor(model => model.Address)
+                </dt>
+                <dd class="col-10">
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-2">
+                    @Html.DisplayNameFor(model => model.OpeningHours)
+                </dt>
+                <dd class="col-10">
+                    @Html.DisplayFor(model => model.OpeningHours) - @Html.DisplayFor(model => model.ClosingHours)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-2">
+                    @Html.DisplayNameFor(model => model.ClosingDays)
+                </dt>
+                <dd class="col-10">
+                    @Html.DisplayFor(model => model.ClosingDays)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-2">
+                    @Html.DisplayNameFor(model => model.TableCount)
+                </dt>
+                <dd class="col-10">
+                    @Html.DisplayFor(model => model.TableCount)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
