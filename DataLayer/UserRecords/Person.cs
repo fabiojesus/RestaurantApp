@@ -77,7 +77,6 @@ namespace Recodme.Academy.RestaurantApp.DataLayer.UserRecords
         public virtual ICollection<StaffRecord> StaffRecords { get; set; }
 
         public virtual ICollection<ClientRecord> ClientRecords { get; set; }
-
         #endregion
 
         #region Constructor

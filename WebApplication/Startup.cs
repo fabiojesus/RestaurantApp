@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.UserBusinessObjects;
 using Recodme.Academy.RestaurantApp.DataAccessLayer.Contexts;
 using Recodme.Academy.RestaurantApp.DataLayer.UserRecords;
 
@@ -65,26 +66,6 @@ namespace WebApplication
             //CORS irresponsável
             services.AddCors(x => x.AddPolicy("Default", (builder) => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-            //Setup do JWT
-            var key = Encoding.UTF8.GetBytes(Configuration.GetValue<string>("Secret"));
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
-
             //Adicionar mais umas pastas de Views
             services.Configure<RazorViewEngineOptions>(o =>
             {
@@ -98,7 +79,7 @@ namespace WebApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<RestaurantUser> userManager, RoleManager<RestaurantRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -111,12 +92,11 @@ namespace WebApplication
                 app.UseHsts();
             }
 
-            app.UseAuthentication();
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
@@ -129,6 +109,16 @@ namespace WebApplication
                     name: "api",
                     pattern: "api/{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        public  void SetupRolesAndUsers(UserManager<RestaurantUser> userManager, RoleManager<RestaurantRole> roleManager)
+        {
+            if (roleManager.FindByNameAsync("Client").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Client" }).Wait();
+            if (roleManager.FindByNameAsync("Staff").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Staff" }).Wait();
+            if (roleManager.FindByNameAsync("Admin").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Admin" }).Wait();
+            var person = new Person(DateTime.Now, "Administrator", "", 0000000, 0);
+            var abo = new AccountBusinessController(userManager, roleManager);
+            var res =  abo.Register("admin", "admin@restLen.com", "admin123!#", person, "Admin").Result;
         }
     }
 }

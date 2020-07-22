@@ -11,6 +11,8 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using WebApplication.Support;
+using WebApplication.Models.HtmlComponents;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
 {
@@ -19,7 +21,18 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
         private UserManager<RestaurantUser> UserManager { get; set; }
         private SignInManager<RestaurantUser> SignInManager { get; set; }
         private RoleManager<RestaurantRole> RoleManager { get; set; }
-        private readonly PersonBusinessObject _bo = new PersonBusinessObject();
+
+        private IActionResult OperationErrorBackToIndex(Exception exception)
+        {
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, exception);
+            return RedirectToAction(nameof(Index), "Home");
+        }
+
+        private IActionResult OperationSuccess(string message)
+        {
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Success, message);
+            return RedirectToAction(nameof(Index), "Home");
+        }
 
         public AccountsController(UserManager<RestaurantUser> uManager, SignInManager<RestaurantUser> sManager, RoleManager<RestaurantRole> rManager)
         {
@@ -43,29 +56,13 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel vm)
         {
-            try
-            {
-                var user = await UserManager.FindByNameAsync(vm.UserName);
-                if(user == null)
-                {
-                    var person = new Person(vm.BirthDate, vm.FirstName, vm.LastName, vm.VatNumber, vm.PhoneNumber);
-                    var personOperation = await _bo.CreateAsync(person);
-                    if(!personOperation.Success) return View("Error", new ErrorViewModel() { RequestId = personOperation.Exception.Message});
-                    
-                    user = new RestaurantUser();
-                    user.UserName = vm.UserName;
-                    user.Email = vm.Email;
-                    user.PersonId = person.Id;
-                    var result = await UserManager.CreateAsync(user, vm.Password);
-                    
-                    var roleSetResult = await UserManager.AddToRoleAsync(user, vm.Role);
-                }
-                return RedirectToAction("Index", "Home");
-            }
-            catch(Exception e)
-            {
-                return View("Error", new ErrorViewModel() { RequestId = e.Message });
-            }
+            var accountBo = new AccountBusinessController(UserManager, RoleManager);
+            var person = new Person(vm.BirthDate, vm.FirstName, vm.LastName, vm.VatNumber, vm.PhoneNumber);
+            var registerOperation = await accountBo.Register(vm.UserName, vm.Email, vm.Password, person, vm.Role);
+            if (registerOperation.Success)
+                return OperationSuccess("The account was successfuly registered!");
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, registerOperation.Message);
+            return View(vm);
         }
 
 
@@ -79,8 +76,12 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
         public async Task<IActionResult> Login(LoginViewModel vm)
         {
             var loginOperation = await SignInManager.PasswordSignInAsync(vm.UserName, vm.Password, false, false);
-            if (loginOperation.Succeeded) return RedirectToAction("Index", "Home");
-            else return View("Error", new ErrorViewModel() { RequestId = loginOperation.ToString() });
+            if (loginOperation.Succeeded) return OperationSuccess("Welcome User");
+            else 
+            {
+                TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, loginOperation.ToString());
+                return View(vm);
+            }
         }
 
 

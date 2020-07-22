@@ -1,4 +1,5 @@
-﻿using Recodme.Academy.RestaurantApp.DataAccessLayer.Contexts;
+﻿using Microsoft.AspNetCore.Identity;
+using Recodme.Academy.RestaurantApp.DataAccessLayer.Contexts;
 using Recodme.Academy.RestaurantApp.DataLayer.MenuRecords;
 using Recodme.Academy.RestaurantApp.DataLayer.RestaurantRecords;
 using Recodme.Academy.RestaurantApp.DataLayer.UserRecords;
