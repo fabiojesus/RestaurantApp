@@ -12,7 +12,7 @@ using WebApplication.Support;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantControllers.Web.MenuControllers
 {
-    
+    [Authorize(Roles = "Admin")]
     [Route("[controller]")]
     public class CoursesController : Controller
     {

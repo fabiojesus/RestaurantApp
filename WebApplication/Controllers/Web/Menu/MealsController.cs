@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PresentationLayer.Models;
 using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.MenuBusinessObjects;
 using Recodme.Academy.RestaurantApp.WebApplication.Models.MenuViewModels;
@@ -12,6 +13,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
 {
     
 
+    [Authorize(Roles = "Admin")]
     [Route("[controller]")]
     public class MealsController : Controller
     {

@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 using WebApplication.Models.HtmlComponents;
 using WebApplication.Support;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantControllers.Web.MenuControllers
 {
     
 
+    [Authorize(Roles = "Admin")]
     [Route("[controller]")]
     public class MenusController : Controller
     {

@@ -1,19 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PresentationLayer.Models;
 using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.RestaurantBusinessObjects;
+using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.UserBusinessObjects;
+using Recodme.Academy.RestaurantApp.DataLayer.UserRecords;
 using Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantControllers.Web.RestaurantControllers
 {
     
 
+    [Authorize]
     [Route("[controller]")]
     public class BookingsController : Controller
     {
         private readonly BookingBusinessObject _bo = new BookingBusinessObject();
+        private readonly ClientRecordBusinessObject _crbo = new ClientRecordBusinessObject();
+        private readonly RestaurantBusinessObject _rbo = new RestaurantBusinessObject();
+        private readonly StaffRecordBusinessObject _srbo = new StaffRecordBusinessObject();
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -44,6 +52,29 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
 
         [HttpGet("/new")]
         public IActionResult New()
+        {
+            return View();
+        }
+
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("/ClientBooking")]
+        public async Task<IActionResult> ClientBooking()
+        {
+            var getClientRecords = await _crbo.FilterAsync(x => x.PersonId == profileId);
+            if (!getClientRecords.Success) return View("Error", new ErrorViewModel() { RequestId = getClientRecords.Exception.Message });
+
+            var bookings = _bo.FilterAsync(x => getClientRecords.Result.Select(x => x.Id).Contains(x.ClientId));
+
+
+            ViewData["Header"] = "Bookings";
+
+            return View();
+        }
+
+        [Authorize(Roles = "Staff")]
+        [HttpGet("/RestaurantBooking/{id}")]
+        public async Task<IActionResult> StaffBooking(Guid? id)
         {
             return View();
         }

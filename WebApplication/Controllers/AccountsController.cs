@@ -13,9 +13,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using WebApplication.Support;
 using WebApplication.Models.HtmlComponents;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
 {
+    [Authorize]
     public class AccountsController : Controller
     {
         private UserManager<RestaurantUser> UserManager { get; set; }
@@ -41,17 +43,20 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
             RoleManager = rManager; 
         }
 
+        [AllowAnonymous]
         [HttpPost("/GenerateToken")]
         public IActionResult GenerateToken(LoginViewModel vm)
         {
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel vm)
@@ -66,11 +71,13 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
         }
 
 
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel vm)

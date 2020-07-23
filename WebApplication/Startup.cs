@@ -112,13 +112,17 @@ namespace WebApplication
 
         public  void SetupRolesAndUsers(UserManager<RestaurantUser> userManager, RoleManager<RestaurantRole> roleManager)
         {
-            //if (roleManager.FindByNameAsync("Client").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Client" }).Wait();
-            //if (roleManager.FindByNameAsync("Staff").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Staff" }).Wait();
-            //if (roleManager.FindByNameAsync("Admin").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Admin" }).Wait();
-            //if(userManager.FindByNameAsync("admin"))
-            //var person = new Person(DateTime.Now, "Administrator", "", 0000000, 0);
-            //var abo = new AccountBusinessController(userManager, roleManager);
-            //var res =  abo.Register("admin", "admin@restLen.com", "admin123!#", person, "Admin").Result;
+            if (roleManager.FindByNameAsync("Client").Result == null) roleManager.CreateAsync(new RestaurantRole() { Name = "Client" }).Wait();
+            if (roleManager.FindByNameAsync("Staff").Result == null) roleManager.CreateAsync(new RestaurantRole() { Name = "Staff" }).Wait();
+            if (roleManager.FindByNameAsync("Admin").Result == null) roleManager.CreateAsync(new RestaurantRole() { Name = "Admin" }).Wait();
+            if(userManager.FindByNameAsync("admin").Result == null)
+            {
+                var person = new Person(DateTime.Now, "Administrator", "", 0000000, 0);
+                var abo = new AccountBusinessController(userManager, roleManager);
+                var res = abo.Register("admin", "admin@restLen.com", "Admin123!#", person, "Admin").Result;
+                var roleRes = userManager.AddToRoleAsync(userManager.FindByNameAsync("admin").Result, "Admin");
+            }
+            
         }
     }
 }

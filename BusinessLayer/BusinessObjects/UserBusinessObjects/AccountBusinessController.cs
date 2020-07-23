@@ -41,23 +41,29 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.UserBusine
                     transactionScope.Dispose();
                     return createPersonOperation;
                 }
-                var admin = new RestaurantUser()
+                var user = new RestaurantUser()
                 {
                     Email = email,
                     UserName = userName,
                     PersonId = profile.Id
                 };
-                var result = await UserManager.CreateAsync(admin, password);
+                var result = await UserManager.CreateAsync(user, password);
                 if (!result.Succeeded)
                 {
                     transactionScope.Dispose();
                     return new OperationResult() { Success = false, Message = result.ToString() };
                 }
                 var roleData = await RoleManager.FindByNameAsync(role);
-                if(roleData == null)
+                if(roleData == null || roleData.Name == "Admin")
                 {
                     transactionScope.Dispose();
                     return new OperationResult() { Success = false, Message = $"Role {role} does not exist" };
+                }
+                var roleOpt = await UserManager.AddToRoleAsync(user, role);
+                if (!roleOpt.Succeeded)
+                {
+                    transactionScope.Dispose();
+                    return new OperationResult() { Success = false, Message = roleOpt.ToString() };
                 }
                 transactionScope.Complete();
                 return new OperationResult() { Success = true};

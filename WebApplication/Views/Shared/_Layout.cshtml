@@ -64,13 +64,36 @@
                             </li>
                         }
                     </ul>
+                    
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Administration">
-                                <i class="fas fa-user-cog"></i>
-                                Administration
-                            </a>
-                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Administration">
+                                    <i class="fas fa-user-cog"></i>
+                                    Administration
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Client"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Client">
+                                    <i class="fas fa-user-cog"></i>
+                                    Client
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Staff"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Staff">
+                                    <i class="fas fa-user-cog"></i>
+                                    Staff
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="AboutUs">
                                 <i class="fas fa-address-card"></i>
