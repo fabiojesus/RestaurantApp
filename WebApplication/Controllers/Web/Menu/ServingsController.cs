@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication.Models.HtmlComponents;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantControllers.Web.MenuControllers
 {
@@ -19,6 +20,20 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         private readonly CourseBusinessObject _cbo = new CourseBusinessObject();
         private readonly DishBusinessObject _dbo = new DishBusinessObject();
 
+
+        private string GetDeleteRef()
+        {
+            return this.ControllerContext.RouteData.Values["controller"] + "/" + nameof(Delete);
+        }
+
+        private List<BreadCrumb> GetCrumbs()
+        {
+            return new List<BreadCrumb>()
+                { new BreadCrumb(){Icon ="fa-home", Action="Index", Controller="Home", Text="Home"},
+                  new BreadCrumb(){Icon = "fa-user-cog", Action="Administration", Controller="Home", Text = "Administration"},
+                  new BreadCrumb(){Icon = "fa-hat-chef", Action="Index", Controller="Servings", Text = "Servings"}
+                };
+        }
 
         private async Task<List<MenuViewModel>> GetMenuViewModels(List<Guid> ids)
         {
@@ -86,8 +101,8 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
             {
                 lst.Add(ServingViewModel.Parse(item));
             }
-            ViewData["BreadCrumbs"] = new List<string>() { "Home", "Servings" };
             ViewData["Title"] = "Servings";
+            ViewData["Breadcrumbs"] = GetCrumbs();
             ViewData["Menus"] = await GetMenuViewModels(mIds);
             ViewData["Courses"] = await GetCourseViewModels(cIds);
             ViewData["Dishes"] = await GetDishViewModels(dIds);

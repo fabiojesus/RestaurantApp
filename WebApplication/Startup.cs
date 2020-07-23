@@ -91,15 +91,14 @@ namespace WebApplication
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
             app.UseAuthentication();
-
             app.UseAuthorization();
-
+            SetupRolesAndUsers(userManager, roleManager);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -113,12 +112,13 @@ namespace WebApplication
 
         public  void SetupRolesAndUsers(UserManager<RestaurantUser> userManager, RoleManager<RestaurantRole> roleManager)
         {
-            if (roleManager.FindByNameAsync("Client").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Client" }).Wait();
-            if (roleManager.FindByNameAsync("Staff").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Staff" }).Wait();
-            if (roleManager.FindByNameAsync("Admin").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Admin" }).Wait();
-            var person = new Person(DateTime.Now, "Administrator", "", 0000000, 0);
-            var abo = new AccountBusinessController(userManager, roleManager);
-            var res =  abo.Register("admin", "admin@restLen.com", "admin123!#", person, "Admin").Result;
+            //if (roleManager.FindByNameAsync("Client").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Client" }).Wait();
+            //if (roleManager.FindByNameAsync("Staff").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Staff" }).Wait();
+            //if (roleManager.FindByNameAsync("Admin").Result == null)  roleManager.CreateAsync(new RestaurantRole() { Name = "Admin" }).Wait();
+            //if(userManager.FindByNameAsync("admin"))
+            //var person = new Person(DateTime.Now, "Administrator", "", 0000000, 0);
+            //var abo = new AccountBusinessController(userManager, roleManager);
+            //var res =  abo.Register("admin", "admin@restLen.com", "admin123!#", person, "Admin").Result;
         }
     }
 }

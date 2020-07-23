@@ -24,8 +24,8 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewMode
 
         [Display(Name = "Table Count")]
         [Required(ErrorMessage = "Input a number of tables")]
-        [Range(0, int.MaxValue)]
-        public int TableCount { get; set; }
+        [RegularExpression("^([0-9]+,[0-9]+)$")]
+        public string TableCount { get; set; }
 
 
         public static RestaurantViewModel Parse(Restaurant restaurant)
@@ -38,13 +38,13 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewMode
                 OpeningHours = restaurant.OpeningHours,
                 ClosingHours = restaurant.ClosingHours,
                 ClosingDays = restaurant.ClosingDays,
-                TableCount = restaurant.TableCount
+                TableCount = restaurant.TableCount.ToString()
             };
         }
 
         public Restaurant ToModel()
         {
-            return new Restaurant(Name, Address, OpeningHours, ClosingHours, ClosingDays, TableCount);
+            return new Restaurant(Name, Address, OpeningHours, ClosingHours, ClosingDays, int.Parse(TableCount));
         }
         public Restaurant ToModel(Restaurant model)
         {
@@ -53,7 +53,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewMode
             model.OpeningHours = OpeningHours;
             model.ClosingHours = ClosingHours;
             model.ClosingDays = ClosingDays;
-            model.TableCount = TableCount;
+            model.TableCount = int.Parse(TableCount);
             return model;
         }
 
@@ -65,7 +65,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Models.RestaurantViewMode
                     OpeningHours == model.OpeningHours &&
                     ClosingHours == model.ClosingHours &&
                     ClosingDays == model.ClosingDays &&
-                    TableCount == model.TableCount;
+                    TableCount == model.TableCount.ToString();
         }
     }
 }

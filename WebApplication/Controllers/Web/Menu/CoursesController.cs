@@ -106,7 +106,11 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
             {
                 var model = vm.ToModel();
                 var createOperation = await _bo.CreateAsync(model);
-                if (!createOperation.Success) return OperationErrorBackToIndex(createOperation.Exception);
+                if (!createOperation.Success)
+                {
+                    TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, createOperation.Exception);
+                    return View(vm);
+                }
                 else return OperationSuccess("The record was successfuly created");
             }
             return View(vm);

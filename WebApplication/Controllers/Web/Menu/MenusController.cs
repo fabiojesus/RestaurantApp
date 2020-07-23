@@ -174,11 +174,36 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MenuViewModel vm)
         {
+            var listMealOperation = await _mbo.ListNonDeletedAsync();
+            if (!listMealOperation.Success) return OperationErrorBackToIndex(listMealOperation.Exception);
+
+            var listRestOperation = await _rbo.ListNonDeletedAsync();
+            if (!listRestOperation.Success) return OperationErrorBackToIndex(listRestOperation.Exception);
+
+            var mealList = new List<SelectListItem>();
+            foreach (var item in listMealOperation.Result)
+            {
+                mealList.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name });
+            }
+
+            var restList = new List<SelectListItem>();
+            foreach (var item in listRestOperation.Result)
+            {
+                restList.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name });
+            }
+
+            ViewBag.Meals = mealList;
+            ViewBag.Restaurants = restList;
+
             if (ModelState.IsValid)
             {
                 var model = vm.ToModel();
                 var createOperation = await _bo.CreateAsync(model);
-                if (!createOperation.Success) return OperationErrorBackToIndex(createOperation.Exception);
+                if (!createOperation.Success)
+                {
+                    TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, createOperation.Exception);
+                    return View(vm);
+                }
                 else return OperationSuccess("The record was successfuly created");
             }
             return View(vm);
@@ -227,6 +252,28 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, MenuViewModel vm)
         {
+
+            var listRestOperation = await _rbo.ListNonDeletedAsync();
+            if (!listRestOperation.Success) return OperationErrorBackToIndex(listRestOperation.Exception);
+
+            var listMealOperation = await _mbo.ListNonDeletedAsync();
+            if (!listMealOperation.Success) return OperationErrorBackToIndex(listMealOperation.Exception);
+
+            var mealList = new List<SelectListItem>();
+            foreach (var item in listMealOperation.Result)
+            {
+                mealList.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name });
+            }
+
+            var restList = new List<SelectListItem>();
+            foreach (var item in listRestOperation.Result)
+            {
+                restList.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name });
+            }
+
+            ViewBag.Meals = mealList;
+            ViewBag.Restaurants = restList;
+
             if (ModelState.IsValid)
             {
                 var getOperation = await _bo.ReadAsync(id);
