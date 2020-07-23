@@ -61,13 +61,13 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         [HttpGet("/ClientBooking")]
         public async Task<IActionResult> ClientBooking()
         {
-            var getClientRecords = await _crbo.FilterAsync(x => x.PersonId == profileId);
-            if (!getClientRecords.Success) return View("Error", new ErrorViewModel() { RequestId = getClientRecords.Exception.Message });
+            //var getClientRecords = await _crbo.FilterAsync(x => x.PersonId == profileId);
+            //if (!getClientRecords.Success) return View("Error", new ErrorViewModel() { RequestId = getClientRecords.Exception.Message });
 
-            var bookings = _bo.FilterAsync(x => getClientRecords.Result.Select(x => x.Id).Contains(x.ClientId));
+            //var bookings = _bo.FilterAsync(x => getClientRecords.Result.Select(x => x.Id).Contains(x.ClientId));
 
 
-            ViewData["Header"] = "Bookings";
+            //ViewData["Header"] = "Bookings";
 
             return View();
         }
