@@ -2,15 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication.Models;
 using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.UserBusinessObjects;
 using Recodme.Academy.RestaurantApp.DataLayer.UserRecords;
 using Recodme.Academy.RestaurantApp.WebApplication.Models.UserViewModels;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using WebApplication.Support;
 using WebApplication.Models.HtmlComponents;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
 {
     [Authorize]
-    public class AccountsController : Controller
+    public class AccountController : Controller
     {
         private UserManager<RestaurantUser> UserManager { get; set; }
         private SignInManager<RestaurantUser> SignInManager { get; set; }
@@ -36,7 +30,7 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
             return RedirectToAction(nameof(Index), "Home");
         }
 
-        public AccountsController(UserManager<RestaurantUser> uManager, SignInManager<RestaurantUser> sManager, RoleManager<RestaurantRole> rManager)
+        public AccountController(UserManager<RestaurantUser> uManager, SignInManager<RestaurantUser> sManager, RoleManager<RestaurantRole> rManager)
         {
             UserManager = uManager;
             SignInManager = sManager;
@@ -96,6 +90,11 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers
         {
             await SignInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> AccessDenied()
+        {
+            return View();
         }
     }
 }

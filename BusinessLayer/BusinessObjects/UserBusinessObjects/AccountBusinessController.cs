@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Recodme.Academy.RestaurantApp.BusinessLayer.OperationResults;
+using Recodme.Academy.RestaurantApp.DataAccessLayer.Contexts;
 using Recodme.Academy.RestaurantApp.DataLayer.UserRecords;
 using System;
 using System.Linq;
@@ -19,6 +21,7 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.UserBusine
             UserManager = uManager;
             RoleManager = rManager;
         }
+
 
         TransactionOptions transactionOptions = new TransactionOptions
         {

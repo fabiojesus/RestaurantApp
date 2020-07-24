@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PresentationLayer.Models;
 using Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.RestaurantBusinessObjects;
@@ -9,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication.Models.HtmlComponents;
+using WebApplication.Support;
 
 namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantControllers.Web.RestaurantControllers
 {
@@ -22,6 +25,36 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         private readonly ClientRecordBusinessObject _crbo = new ClientRecordBusinessObject();
         private readonly RestaurantBusinessObject _rbo = new RestaurantBusinessObject();
         private readonly StaffRecordBusinessObject _srbo = new StaffRecordBusinessObject();
+        private readonly UserManager<RestaurantUser> _uManager;
+
+        public BookingsController(UserManager<RestaurantUser> uManager)
+        {
+            _uManager = uManager;
+        }
+
+        private IActionResult RecordNotFound()
+        {
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Information, "The record was not found");
+            return RedirectToAction(nameof(Index));
+        }
+
+        private IActionResult OperationErrorBackToIndex(Exception exception)
+        {
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, exception);
+            return RedirectToAction(nameof(Index));
+        }
+
+        private IActionResult OperationErrorBackToIndex(string error)
+        {
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Danger, error);
+            return RedirectToAction(nameof(Index));
+        }
+
+        private IActionResult OperationSuccess(string message)
+        {
+            TempData["Alert"] = AlertFactory.GenerateAlert(NotificationType.Success, message);
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -61,13 +94,18 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         [HttpGet("/ClientBooking")]
         public async Task<IActionResult> ClientBooking()
         {
-            //var getClientRecords = await _crbo.FilterAsync(x => x.PersonId == profileId);
-            //if (!getClientRecords.Success) return View("Error", new ErrorViewModel() { RequestId = getClientRecords.Exception.Message });
 
-            //var bookings = _bo.FilterAsync(x => getClientRecords.Result.Select(x => x.Id).Contains(x.ClientId));
+            var user = await _uManager.FindByNameAsync(User.Identity.Name);
+            if (user == null) OperationErrorBackToIndex("Not a client");
 
+            var getClientRecords = await _crbo.FilterAsync(x => x.PersonId == user.PersonId);
+            if (!getClientRecords.Success) OperationErrorBackToIndex(getClientRecords.Exception);
 
-            //ViewData["Header"] = "Bookings";
+            var bookings = await _bo.FilterAsync(x => getClientRecords.Result.Select(y => y.Id).Contains(x.ClientId));
+
+            var restaurants = await _rbo.FilterAsync(x => getClientRecords.Result.Select(y => y.RestaurantId).Contains(x.Id));
+
+            ViewData["Header"] = "Bookings";
 
             return View();
         }
