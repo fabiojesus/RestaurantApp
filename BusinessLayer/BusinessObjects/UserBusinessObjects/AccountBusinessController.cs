@@ -57,7 +57,7 @@ namespace Recodme.Academy.RestaurantApp.BusinessLayer.BusinessObjects.UserBusine
                     return new OperationResult() { Success = false, Message = result.ToString() };
                 }
                 var roleData = await RoleManager.FindByNameAsync(role);
-                if(roleData == null || roleData.Name == "Admin")
+                if(roleData == null)
                 {
                     transactionScope.Dispose();
                     return new OperationResult() { Success = false, Message = $"Role {role} does not exist" };

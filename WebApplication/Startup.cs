@@ -34,7 +34,8 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
+            services.AddSession();
+            services.AddMemoryCache();
             //Politicas de cookies
             services.Configure<CookiePolicyOptions>(
                 options =>
@@ -94,7 +95,7 @@ namespace WebApplication
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

@@ -84,8 +84,10 @@ namespace Recodme.Academy.RestaurantApp.WebApplication.Controllers.RestaurantCon
         }
 
         [HttpGet("/new")]
-        public IActionResult New()
+        public async Task<IActionResult> New()
         {
+            var name = User.Identity.Name;
+            var user = await _uManager.FindByNameAsync(name);
             return View();
         }
 
